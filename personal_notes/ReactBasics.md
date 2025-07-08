@@ -8,6 +8,10 @@
 - [＃03 新・日本一わかりやすいReact入門【基礎編】create-react-appで環境構築](#L3)
 - [＃04 新・日本一わかりやすいReact入門【基礎編】コンポーネントとprops](#L4)
 - [＃05 新・日本一わかりやすいReact入門【基礎編】コンポーネントのimportとexport](#L5)
+- [＃06 新・日本一わかりやすいReact入門【基礎編】コンポーネントの状態管理](#L6)
+- [＃07 新・日本一わかりやすいReact入門【基礎編】頻出するuseStateのケース3選](#L7)
+- [＃08 新・日本一わかりやすいReact入門【基礎編】ライフサイクルと副作用を理解しよう](#L8)
+- [＃09 新・日本一わかりやすいReact入門【基礎編】useEffect内でAPIを呼び出そう](#L9)
 
 
 ---
@@ -379,7 +383,6 @@ export default Article;
 
 ```
 
-
 <br>
 
 ---
@@ -387,14 +390,153 @@ export default Article;
 ---
 
 <br>
+
 
 <a id="L6"></a>
 
-## 
+## ＃06 新・日本一わかりやすいReact入門【基礎編】コンポーネントの状態管理
+
+
+https://www.youtube.com/watch?v=dTghhYtvPek&list=PLX8Rsrpnn3IWPoM7-1YPDksRRkamRY25k&index=6
+
+
+### Hooksとは
+
+- （古いバージョンでは）クラスコンポーネントでしか使えなかったが
+    - コンポーネント内で状態を管理する`state`
+    - コンポーネントの時間の流れに基づく`ライフサイクル`
+- Hooksにより、関数コンポーネントでも使えるように
+- Hooks = クラスコンポーネントの機能に接続する
+
+### なぜ`state`を使うのか
+
+- Reactコンポーネント内の値を書き換えたい
+    - コンポーネント内の要素をDOMで直接書き換える => × getElementByIDなど
+    - 新しい値を使って再描画（再レンダリング）させる => 〇 
+- Reactコンポーネントが再描画するきっかけは？
+    - `state`が変更されたとき
+    - `props`が変更されたとき
+
+
+### useStateの使い方
+
+
+![](./images/Basic0601.png)
+
+
+```javascript
+const Article = (props) => {
+    const [isPublished,  setIsPublished] = useState(false);
+    console.log(isPublished);   //この時はfalseが出力
+
+    return (
+        <div>
+            <Title title={props.title} />
+            <Content content={props.content} />
+            <button onClick={()=> setIsPublished(true)}>公開</button>
+        </div>
+    );
+
+    //公開ボタンのonClick発生時にtrueが出力される
+}
+
+```
+
+### `props`と`state`の違い
+
+
+- 両者も再描画のきっかけになるが
+    - `props`は引数のようにコンポーネントに渡される値
+    - `state`はコンポーネントの内部で宣言・制御される値
 
 
 
+### `state`を`props`に渡す
 
+```javascript
+//更新関数はそのままpropsとして渡さず、関数化する。
+//関数をprodに渡すときは注意する（publishArticle()を宣言する）
+
+const Article = (props) => {
+    const [isPublished,  setIsPublished] = useState(false);
+    const publishArticle = () => {
+        setIsPublished(true);
+    }
+
+    return (
+        <div>
+            <Title title={props.title} />
+            <Content content={props.content} />
+            <PublishButton isPublished={isPublished} onClick={publishArticle}>公開</button>
+        </div>
+    );
+}
+
+const PublishButton = () => {
+    return (
+        <button onClick={() => props.onClick()}> 
+            公開状態：{props.isPublished.toString()}
+        </button>
+    )
+}
+export default PublishButton;
+
+//props.onClick()は、publishArticle()
+//HTMLのbuttonがもつonClickイベントに渡す
+
+```
+
+### propsに関数を渡すときの注意点
+
+
+![](./images/Basic0602.png)
+
+
+<br>
+
+---
+---
+---
+
+<br>
+
+
+
+<a id="L7"></a>
+
+## ＃07 新・日本一わかりやすいReact入門【基礎編】頻出するuseStateのケース3選
+
+
+https://www.youtube.com/watch?v=7MzVcLAtl8g&list=PLX8Rsrpnn3IWPoM7-1YPDksRRkamRY25k&index=7
+
+
+### おさらい
+
+![](./images/Basic0601.png)
+
+
+### 引数を使って更新する
+
+![](./images/Basic0701.png)
+
+
+
+### prevStateを活用する
+
+![](./images/Basic0702.png)
+
+
+※注）Reactのドキュメントでも、上記のようなカウンターの実例があるがバグが潜んでいる。
+
+※注２）PrevStateにカウントアップ（ダウン）する理由だが、count変数をそのまま使うとタイムラグが発生する。（アリアルタイム性が失ってしまう）
+
+※注３）カウントアップ処理での処理形式は、アロー関数の略記法になっている
+
+
+
+### ON/OFFを切り替えるボタン
+
+![](./images/Basic0703.png)
 
 
 
@@ -408,6 +550,112 @@ export default Article;
 
 
 
+<a id="L8"></a>
+
+## ＃08 新・日本一わかりやすいReact入門【基礎編】ライフサイクルと副作用を理解しよう
+
+
+### ライフサイクルとは
+
+- コンポーネントが発生してから破棄される真野で時間の流れ
+- ライフサイクルメソッドを使うと、時点に応じた処理を実行できる
+- Class Component時代は下記3メソッドがよくつかわれていた
+    - conponentDidMount()
+    - conponentDidUpdate()
+    - conponentWillUnmount()
+- Hooks時代から、useEffectでライフサイクルを表現
+
+
+### ライフサイクルの種類
+
+
+![](./images/Basic0801.png)
+
+
+
+![](./images/Basic0802.png)
+
+
+
+
+### 副作用(effect)フックを使おう
+
+
+![](./images/Basic0803.png)
+
+
+上記の説明で、言いたいことは「再描画されるごとに、ログが書き出される」ということを示したサンプルである。
+
+また、上記のサンプルは`Updateing`に特化した例である。
+
+
+### 第2引数の依存関係を理解する
+
+
+![](./images/Basic0804.png)
+
+
+※注）依存関係を指定した変数が変わったときに、useEffectが作用する。
+
+
+
+### クリーンアップを理解する
+
+
+![](./images/Basic0805.png)
+
+
+※注）DBアクセスしっぱなし（購読しっぱなし）では、メモリリークなどを引き起こす。
+
+※注２）クリーンアップの場合、useEffectの中を、アロー関数を`return`する
+
+※注３）最初はopenフラグがfalseなので、そのままで、次にopenフラグが立つので一度nsubscribeされSubscribeになる。再度クリックするとUnsubscribeになりfalseに戻ってそのまま終了となる。
+
+※注４）クリーンアップは再レンダリングされるときに発動する。
+
+
+<br>
+
+---
+---
+---
+
+<br>
+
+
+<a id="L9"></a>
+
+## ＃09 新・日本一わかりやすいReact入門【基礎編】useEffect内でAPIを呼び出そう
+
+### useEffectのユースケース
+
+
+- APIやデータベースから非同期通信でデータを取得(fetch)する
+- 特定の値が変わったらデータを再取得(refetch)する
+
+
+![](./images/Basic0901.png)
+
+
+![](./images/Basic0902.png)
+
+
+※注）1番目のthenってなに？
+
+
+![](./images/Basic0903.png)
+
+
+
+
+
+<br>
+
+---
+---
+---
+
+<br>
 
 
 # 付録１ : Claudeから教わった、JSXファイル、TSXファイルについて。
