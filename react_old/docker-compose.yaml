@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  app:
+    build: 
+      context: . #rootをどこにするか
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/var/www/html/app
+    tty: true
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true #Reactのファイルを更新したときに常に監視状態にする
+    # build時は、commandはいったんコメdocker-compose run --rm app sh -c 'npx create-react-app app --template typescript'ントアウトして
+    # 
+    # app配下のroot権限を「sudo chown -R myuser:myuser app/*」に変更
+    # コンテナが立ち上がったら、package,jsonのscripts欄で
+    #「"winstart": "WATCHPACK_POLLING=true react-scripts start",」を追記。
+    # 実行したら、コメントアウトを解除する。
+    command: sh -c 'cd app && npm winstart'

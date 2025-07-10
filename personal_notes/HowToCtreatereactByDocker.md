@@ -57,9 +57,32 @@ services:
       - ./app:var/www/html/app
     environment:
       - CHOKIDAR_USEPOLLING=true #Reactのファイルを更新したときに常に監視状態にする
+    tty: true        
+    stdin_open: true
     command: sh -c 'cd app && npm winstart'
 
 ```
+
+- tty
+    - 仮想端末を配置するコマンド
+    - docker run -it {container_name}の -i にあたる設定
+    - シェルスクリプトの実行や対話型のCLIツールを使う場合、ttyを有効にすると端末が割り当てられるため、正常に動作するようになる。
+    - 有効にすると、コンテナが実行されている間、常に仮想ターミナルがアタッチされる
+
+
+- stdin_open
+    - 標準入力（stdin）をオープン状態する。
+    - これにより、ユーザーが標準入力を通じてコンテナに対話的に入力を送ることが可能になる
+    - コンテナに接続してコマンドを入力したい場合や、対話的なシェルを利用する場合に有効
+
+(参考)　docker-composeのtty, stdin_open
+
+https://qiita.com/s_i_engineer/items/9299e64062d5ba059d40
+
+
+
+
+
 
 ## ビルド
 ```sh
@@ -93,6 +116,20 @@ docker-compose run --rm app sh -c 'npx create-react-app app --template typescrip
   },
 
 ```
+
+
+変更後、docker-compose.ymlで、コマンド起動を変える
+
+```yaml
+
+# before
+    command: sh -c 'cd app && npm start'
+
+# after
+    command: sh -c 'cd app && npm winstart'
+
+```
+
 
 
 
