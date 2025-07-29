@@ -3,9 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
-import Greeter from './Greeter'
-
-function App() {
+function __App() {
   const [count, setCount] = useState(0)
 
   return (
@@ -30,14 +28,8 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-
-    <div>
-      <Greeter message='Hoge000' id="123"/>
-    </div>
-
-
     </>
   )
 }
 
-export default App
+export default __App

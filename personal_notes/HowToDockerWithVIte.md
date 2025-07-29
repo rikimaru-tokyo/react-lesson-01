@@ -85,13 +85,13 @@ export default defineConfig({
 1. `docker compose up -d コマンドを実行`
 1. `docker exec -it vite-container sh` # コマンドでコンテナの仮想環境にアクセス
 1. `npm create vite@latest` # npmでvite最新版をインストール
-1. `Ok to Procedd?(y)：y`
+1. `Ok to Proceed?(y)：y`
 1. `Project name ：`        # 任意（defalutでも可）
 1. `Select a framework:React`
 1. `select a variant：`     # TypeScript( + SWCの方が高速にビルドしてくれる)
 1. `cd {プロジェクト名}`
 1. `npm install`
-1. `npm run dev`
+1. `npm run dev`   # 毎回これでサーバーを立ち上げること
 
 
 
@@ -129,11 +129,9 @@ EOF
     - https://dtnavi.tcdigital.jp/dev_blog/devtool/vite-react-typescript-%e7%92%b0%e5%a2%83%e3%82%92-docker-%e3%81%a7%e6%a7%8b%e7%af%89%e3%81%99%e3%82%8b%e6%96%b9%e6%b3%95/
 
 
-
-
-
-
-
+> [!WARNING]
+> // Viteのバージョン確認
+> npm list -g vite
 
 
 

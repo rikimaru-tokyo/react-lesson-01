@@ -1,0 +1,17 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    #どのディレクトリのdockerfileからimageをビルドするかを指定
+    container_name: ts-container # コンテナ名を明示的に指定する
+    ports:
+      - 5173:5173
+    volumes:
+      - ./app/:/var/www/html/app
+    # ホストマシンの(./app)をコンテナ内のディレクトリ（/var/www/html/app） にマウント
+    environment:
+      - WATCHPACK_POLLING=true #ホットリロードできるように
+    tty: true #コンテナを起動させ続ける
+
+    
